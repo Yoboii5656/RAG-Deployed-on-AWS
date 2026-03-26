@@ -1,0 +1,39 @@
+# ─── AWS EC2 Deployment Guide: Air India Chatbot (Ollama + Mistral) ───────────
+
+# 1. Update system
+sudo apt update && sudo apt upgrade -y
+sudo apt install git curl python3-pip python3-venv -y
+
+# 2. Clone your repo
+git clone https://github.com/<your-username>/Air-India-Chatbot.git
+cd Air-India-Chatbot
+
+# 3. Create & activate virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 4. Install Python dependencies
+pip install -r requirements.txt
+
+# 5. Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 6. Pull Mistral model (~4 GB download)
+ollama pull mistral
+
+# 7. Start Ollama server in background
+nohup ollama serve &
+
+# 8. Run Streamlit (temporary / testing)
+python3 -m streamlit run app.py
+
+# 9. Run Streamlit permanently (background)
+nohup python3 -m streamlit run app.py &
+
+# ─── EC2 Security Group ────────────────────────────────────────────────────────
+# Add Inbound Rule in AWS Console:
+#   Type: Custom TCP
+#   Port: 8501
+#   Source: 0.0.0.0/0  (or your IP for restricted access)
+#
+# Access the app at: http://<your-ec2-public-ip>:8501
